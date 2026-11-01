@@ -15,10 +15,6 @@ name = "Atmosphere"
 file = "material.wgsl"
 name = "Surfaces and water"
 
-[shadow]
-resolution = 2048
-distance = 96.0
-
 [reflection]
 option = "water_reflections"
 
@@ -41,22 +37,6 @@ name = "Bloom"
 [[post]]
 file = "post/grade.wgsl"
 name = "Filmic grade"
-
-[[options]]
-id = "shadows"
-name = "Sun shadows"
-description = "Real-time shadows from the sun and moon."
-type = "bool"
-default = true
-
-[[options]]
-id = "shadow_softness"
-name = "Shadow softness"
-type = "float"
-default = 1.0
-min = 0.0
-max = 3.0
-step = 0.25
 
 [[options]]
 id = "sun_strength"

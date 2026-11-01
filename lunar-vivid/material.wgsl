@@ -1,7 +1,5 @@
 // Terrain lighting: sun/moon with shadow-map shadows, sky and torch light, wet surfaces,
 // and water with waves, fresnel reflections, refraction, depth absorption and shore foam.
-override shadows: bool = true;
-override shadow_softness: f32 = 1.0;
 override sun_strength: f32 = 1.0;
 override ambient_strength: f32 = 1.0;
 override block_light: f32 = 1.0;
@@ -21,37 +19,17 @@ fn sun_color() -> vec3<f32> {
     return sun_transmittance() * (1.3 * day) + vec3<f32>(0.28, 0.40, 0.72) * (0.05 * moon);
 }
 
-// Fraction of sunlight reaching `pos` (1 lit, 0 shadowed), 5-tap PCF on the shadow map.
-fn sun_visibility(pos: vec3<f32>, n: vec3<f32>, ndl: f32) -> f32 {
-    if !shadows || frame.has_shadow == 0u {
-        return 1.0;
-    }
-    let biased = pos + n * (0.06 + 0.12 * (1.0 - saturate1(ndl)));
-    let p = shadow_position(biased);
-    if p.x < 0.0 || p.x > 1.0 || p.y < 0.0 || p.y > 1.0 {
-        return 1.0;
-    }
-    let r = (0.8 + shadow_softness) / frame.shadow_resolution;
-    let z = p.z - 0.0005;
-    var s = textureSampleCompareLevel(shadow_map, shadow_sampler, p.xy, z);
-    s += textureSampleCompareLevel(shadow_map, shadow_sampler, p.xy + vec2<f32>(r, r), z);
-    s += textureSampleCompareLevel(shadow_map, shadow_sampler, p.xy + vec2<f32>(-r, r), z);
-    s += textureSampleCompareLevel(shadow_map, shadow_sampler, p.xy + vec2<f32>(r, -r), z);
-    s += textureSampleCompareLevel(shadow_map, shadow_sampler, p.xy + vec2<f32>(-r, -r), z);
-    s = s / 5.0;
-    let edge = max(abs(p.x - 0.5), abs(p.y - 0.5)) * 2.0;
-    return mix(s, 1.0, smoothstep(0.85, 1.0, edge));
+// Direction toward the light that is up: the sun by day, the moon by night.
+fn light_dir() -> vec3<f32> {
+    return select(frame.moon_direction, frame.sun_direction, frame.sun_direction.y > -0.05);
 }
 
 fn lighting(n: vec3<f32>, pos: vec3<f32>, light: vec2<f32>) -> Lit {
-    let l = normalize(frame.light_direction);
+    let l = light_dir();
     let ndl = dot(n, l);
     let diff = clamp((ndl + 0.1) / 1.1, 0.0, 1.0);
     let sky_gate = smoothstep(0.45, 0.92, light.y);
-    var vis = 1.0;
-    if diff > 0.0 && sky_gate > 0.0 {
-        vis = sun_visibility(pos, n, ndl);
-    }
+    let vis = 1.0;
     let rain_dim = 1.0 - frame.rain * 0.85;
     let direct = sun_color() * (diff * vis * sky_gate * rain_dim * sun_strength);
 
@@ -90,7 +68,7 @@ fn behind_sample(uv: vec2<f32>, surface_dist: f32) -> vec4<f32> {
 }
 
 fn water_surface(input: MaterialInput) -> Surface {
-    let l = normalize(frame.light_direction);
+    let l = light_dir();
     let v = normalize(-input.position);
     var n = normalize(input.normal);
     let dist = length(input.position);
@@ -143,7 +121,7 @@ fn material(input: MaterialInput) -> Surface {
     }
 
     let n = normalize(input.normal);
-    let l = normalize(frame.light_direction);
+    let l = light_dir();
     let v = normalize(-input.position);
     let a_lin = to_linear(input.albedo.rgb);
     let maxc = max(input.tint.r, max(input.tint.g, input.tint.b));
