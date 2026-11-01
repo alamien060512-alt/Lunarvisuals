@@ -33,13 +33,13 @@ fn lighting(n: vec3<f32>, pos: vec3<f32>, light: vec2<f32>) -> Lit {
     let rain_dim = 1.0 - frame.rain * 0.85;
     let direct = sun_color() * (diff * vis * sky_gate * rain_dim * sun_strength);
 
-    var sky_amb = atmosphere(vec3<f32>(0.0, 1.0, 0.0)) * 0.9;
+    var sky_amb = sky_tint(0.6) * 1.8;
     sky_amb = mix(sky_amb, vec3<f32>(luminance(sky_amb)), frame.rain * 0.6);
     let ground = vec3<f32>(0.30, 0.26, 0.20) * (daylight() * 0.18 + 0.01);
     let up = n.y * 0.5 + 0.5;
     let floor_light = vec3<f32>(0.012 + frame.brightness * 0.02 + frame.night_vision * 0.2);
-    let ambient = (mix(ground, sky_amb, up) * pow(light.y, 1.5) + floor_light) * ambient_strength * vec3<f32>(0.9, 1.0, 1.15);
-    let torch = vec3<f32>(1.0, 0.58, 0.27) * (pow(light.x, 2.4) * 2.0 * block_light);
+    let ambient = (mix(ground, sky_amb, up) * (light.y * sqrt(light.y)) + floor_light) * ambient_strength * vec3<f32>(0.9, 1.0, 1.15);
+    let torch = vec3<f32>(1.0, 0.58, 0.27) * ((light.x * light.x * sqrt(light.x)) * 2.0 * block_light);
     return Lit(direct, ambient + torch, vis);
 }
 
@@ -98,7 +98,7 @@ fn water_surface(input: MaterialInput) -> Surface {
 
     // Reflection.
     let r = reflect(-v, n);
-    var refl = atmosphere(vec3<f32>(r.x, abs(r.y), r.z));
+    var refl = sky_tint(abs(r.y)) * 1.5;
     if water_reflections && frame.has_reflection == 1u {
         let ruv = clamp(input.screen + n.xz * 0.02 * water_waves, vec2<f32>(0.0), vec2<f32>(1.0));
         refl = to_linear(textureSampleLevel(reflection, reflection_sampler, ruv, 0.0).rgb);
@@ -137,7 +137,9 @@ fn material(input: MaterialInput) -> Surface {
 
     // Wet-surface sheen: a tight sun highlight on rain-soaked up-facing blocks.
     let h = normalize(l + v);
-    col += lit.direct * (pow(saturate1(dot(n, h)), 160.0) * wet * 2.0 * saturate1(n.y));
+    if wet > 0.01 {
+        col += lit.direct * (pow(saturate1(dot(n, h)), 160.0) * wet * 2.0 * saturate1(n.y));
+    }
 
     if input.fluid == 2u {
         col = a_lin * 3.0;

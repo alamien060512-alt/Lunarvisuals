@@ -19,30 +19,14 @@ name = "Surfaces and water"
 option = "water_reflections"
 
 [[post]]
-file = "post/ssao.wgsl"
-name = "Ambient occlusion"
-
-[[post]]
-file = "post/fog.wgsl"
-name = "Aerial haze"
-
-[[post]]
-file = "post/godrays.wgsl"
-name = "God rays"
-
-[[post]]
-file = "post/bloom.wgsl"
-name = "Bloom"
-
-[[post]]
-file = "post/grade.wgsl"
-name = "Filmic grade"
+file = "post/finish.wgsl"
+name = "Haze, bloom, grade"
 
 [[options]]
 id = "sun_strength"
 name = "Sunlight"
 type = "float"
-default = 1.15
+default = 1.0
 min = 0.2
 max = 2.0
 step = 0.1
@@ -51,7 +35,7 @@ step = 0.1
 id = "ambient_strength"
 name = "Sky light"
 type = "float"
-default = 1.25
+default = 1.0
 min = 0.2
 max = 2.0
 step = 0.1
@@ -90,28 +74,10 @@ type = "bool"
 default = true
 
 [[options]]
-id = "ao_strength"
-name = "Ambient occlusion"
-type = "float"
-default = 0.6
-min = 0.0
-max = 1.5
-step = 0.1
-
-[[options]]
-id = "ao_radius"
-name = "AO radius"
-type = "float"
-default = 1.4
-min = 0.4
-max = 3.0
-step = 0.2
-
-[[options]]
 id = "fog_density"
 name = "Distance haze"
 type = "float"
-default = 1.0
+default = 0.7
 min = 0.0
 max = 1.5
 step = 0.1
@@ -126,19 +92,10 @@ max = 2.0
 step = 0.1
 
 [[options]]
-id = "god_rays"
-name = "God rays"
-type = "float"
-default = 0.35
-min = 0.0
-max = 1.0
-step = 0.05
-
-[[options]]
 id = "bloom"
 name = "Bloom"
 type = "float"
-default = 0.45
+default = 0.25
 min = 0.0
 max = 1.0
 step = 0.05
@@ -156,7 +113,7 @@ step = 0.05
 id = "saturation"
 name = "Saturation"
 type = "float"
-default = 1.3
+default = 1.2
 min = 0.0
 max = 2.0
 step = 0.05
@@ -176,20 +133,5 @@ name = "Vignette"
 type = "bool"
 default = true
 
-[[options]]
-id = "film_grain"
-name = "Film grain"
-type = "float"
-default = 0.0
-min = 0.0
-max = 0.06
-step = 0.005
-
-[[options]]
-id = "lens_dispersion"
-name = "Lens dispersion"
-type = "bool"
-default = false
-
 [budget]
-gpu_ms = 4.0
+gpu_ms = 2.0
