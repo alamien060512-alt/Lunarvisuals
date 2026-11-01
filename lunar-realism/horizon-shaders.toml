@@ -1,0 +1,216 @@
+schema = 1
+id = "lunar_realism"
+name = "Lunar Realism"
+version = "0.1.0"
+api = "0.1"
+description = "Physically-inspired sky, sun shadows, ray-marched-look water, ambient occlusion, aerial haze, god rays, bloom and a filmic grade."
+authors = ["Lunarvisuals"]
+license = "MIT"
+shared = ["common.wgsl"]
+
+[sky]
+file = "sky.wgsl"
+name = "Atmosphere"
+
+[material]
+file = "material.wgsl"
+name = "Surfaces and water"
+
+[shadow]
+resolution = 2048
+distance = 96.0
+
+[reflection]
+option = "water_reflections"
+
+[[post]]
+file = "post/ssao.wgsl"
+name = "Ambient occlusion"
+
+[[post]]
+file = "post/fog.wgsl"
+name = "Aerial haze"
+
+[[post]]
+file = "post/godrays.wgsl"
+name = "God rays"
+
+[[post]]
+file = "post/bloom.wgsl"
+name = "Bloom"
+
+[[post]]
+file = "post/grade.wgsl"
+name = "Filmic grade"
+
+[[options]]
+id = "shadows"
+name = "Sun shadows"
+description = "Real-time shadows from the sun and moon."
+type = "bool"
+default = true
+
+[[options]]
+id = "shadow_softness"
+name = "Shadow softness"
+type = "float"
+default = 1.0
+min = 0.0
+max = 3.0
+step = 0.25
+
+[[options]]
+id = "sun_strength"
+name = "Sunlight"
+type = "float"
+default = 1.0
+min = 0.2
+max = 2.0
+step = 0.1
+
+[[options]]
+id = "ambient_strength"
+name = "Sky light"
+type = "float"
+default = 1.0
+min = 0.2
+max = 2.0
+step = 0.1
+
+[[options]]
+id = "block_light"
+name = "Torch light"
+type = "float"
+default = 1.0
+min = 0.2
+max = 2.0
+step = 0.1
+
+[[options]]
+id = "water_waves"
+name = "Water waves"
+type = "float"
+default = 1.0
+min = 0.0
+max = 2.0
+step = 0.1
+
+[[options]]
+id = "water_clarity"
+name = "Water clarity"
+type = "float"
+default = 0.5
+min = 0.0
+max = 1.0
+step = 0.1
+
+[[options]]
+id = "water_reflections"
+name = "Water reflections"
+type = "bool"
+default = true
+
+[[options]]
+id = "ao_strength"
+name = "Ambient occlusion"
+type = "float"
+default = 0.8
+min = 0.0
+max = 1.5
+step = 0.1
+
+[[options]]
+id = "ao_radius"
+name = "AO radius"
+type = "float"
+default = 1.4
+min = 0.4
+max = 3.0
+step = 0.2
+
+[[options]]
+id = "fog_density"
+name = "Distance haze"
+type = "float"
+default = 1.0
+min = 0.0
+max = 1.5
+step = 0.1
+
+[[options]]
+id = "ground_mist"
+name = "Ground mist"
+type = "float"
+default = 1.0
+min = 0.0
+max = 2.0
+step = 0.1
+
+[[options]]
+id = "god_rays"
+name = "God rays"
+type = "float"
+default = 0.5
+min = 0.0
+max = 1.0
+step = 0.05
+
+[[options]]
+id = "bloom"
+name = "Bloom"
+type = "float"
+default = 0.35
+min = 0.0
+max = 1.0
+step = 0.05
+
+[[options]]
+id = "exposure"
+name = "Exposure"
+type = "float"
+default = 1.0
+min = 0.6
+max = 1.6
+step = 0.05
+
+[[options]]
+id = "saturation"
+name = "Saturation"
+type = "float"
+default = 1.1
+min = 0.0
+max = 2.0
+step = 0.05
+
+[[options]]
+id = "contrast"
+name = "Contrast"
+type = "float"
+default = 1.1
+min = 0.8
+max = 1.5
+step = 0.05
+
+[[options]]
+id = "vignette"
+name = "Vignette"
+type = "bool"
+default = true
+
+[[options]]
+id = "film_grain"
+name = "Film grain"
+type = "float"
+default = 0.015
+min = 0.0
+max = 0.06
+step = 0.005
+
+[[options]]
+id = "lens_dispersion"
+name = "Lens dispersion"
+type = "bool"
+default = true
+
+[budget]
+gpu_ms = 4.0
